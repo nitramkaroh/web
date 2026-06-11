@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Computational Mechanics of Soft Materials Group | Publications</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">Opening</a>
+        <a href="people.html">People</a>
+        <a class="active" href="publications.html">Publications</a>
+        <a href="projects.html">Projects</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-layout">
+    <section class="page-opening">
+      <p class="eyebrow">Publications</p>
+      <h1>Selected and automatically updated publications</h1>
+      <p class="lead">
+        The publication list is generated from public ORCID records and organized by year. Team members are shown in <strong>bold</strong>.
+      </p>
+      <p>
+        The page can be regenerated on demand or automatically on the server, so recent papers, preprints, and proceedings can be added without manual editing of the HTML file.
+      </p>
+    </section>
+
+    <p class="pub-source-note">
+      This page is ORCID-ready. Run <code>python3 tools/generate_publications_from_orcid.py</code> from the site root to fetch public works from ORCID and overwrite this page.
+    </p>
+
+    <section class="publication-list" aria-label="Publication list">
+      <h2 class="pub-year">ORCID import required</h2>
+      <article class="publication-item">
+        <h3>How this page is filled</h3>
+        <p class="pub-meta">
+          The generator reads <code>data/orcid_members.csv</code>, downloads public ORCID works,
+          groups records by publication year, merges duplicates by DOI or title, formats authors,
+          title, venue, publication type and DOI, and bolds names listed in <code>data/group_members.txt</code>.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Computational Mechanics of Soft Materials Group</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+# Regenerate publications.html from ORCID every day at 06:00 server time.
+# Edit /var/www/computational_mechanics_soft_materials_group if your site is installed elsewhere.
+0 6 * * * SITE_DIR=/var/www/computational_mechanics_soft_materials_group /var/www/computational_mechanics_soft_materials_group/deploy/update_publications_daily.sh

@@ -1,0 +1,11 @@
+[Unit]
+Description=Update Computational Mechanics of Soft Materials Group publications page from ORCID
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/var/www/computational_mechanics_soft_materials_group
+ExecStart=/usr/bin/python3 tools/generate_publications_from_orcid.py
+StandardOutput=append:/var/www/computational_mechanics_soft_materials_group/logs/orcid_publications_update.log
+StandardError=append:/var/www/computational_mechanics_soft_materials_group/logs/orcid_publications_update.log

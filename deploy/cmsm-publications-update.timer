@@ -1,0 +1,10 @@
+[Unit]
+Description=Run CMSM Group ORCID publication update every morning
+
+[Timer]
+# Runs every day at 06:00 local server time.
+OnCalendar=*-*-* 06:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,459 @@
+#!/usr/bin/env python3
+"""
+Generate publications.html from public ORCID works.
+
+Usage:
+    python3 tools/generate_publications_from_orcid.py
+    python3 tools/generate_publications_from_orcid.py --members data/orcid_members.csv --out publications.html
+
+The script uses only the Python standard library. It fetches public ORCID works,
+retrieves individual work details, de-duplicates records by DOI/title, groups them by year,
+and bolds authors listed in data/group_members.txt.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import html
+import json
+import re
+import sys
+import time
+import unicodedata
+import urllib.error
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Iterable
+
+ORCID_API = "https://pub.orcid.org/v3.0"
+USER_AGENT = "CMSM-ORCID-Publications/1.0 (static-site-generator)"
+
+
+@dataclass
+class Member:
+    name: str
+    orcid: str = ""
+    role: str = ""
+
+
+@dataclass
+class Publication:
+    title: str
+    year: str = "Unknown year"
+    date_sort: str = "0000-00-00"
+    authors: list[str] = field(default_factory=list)
+    venue: str = ""
+    pub_type: str = ""
+    doi: str = ""
+    url: str = ""
+    source_orcids: set[str] = field(default_factory=set)
+    source_names: set[str] = field(default_factory=set)
+
+    def key(self) -> str:
+        if self.doi:
+            return "doi:" + normalize_doi(self.doi)
+        return "title:" + normalize_key(self.title)
+
+    def merge(self, other: "Publication") -> None:
+        # Prefer the record with richer metadata.
+        if len(other.authors) > len(self.authors):
+            self.authors = other.authors
+        if not self.venue and other.venue:
+            self.venue = other.venue
+        if not self.pub_type and other.pub_type:
+            self.pub_type = other.pub_type
+        if not self.doi and other.doi:
+            self.doi = other.doi
+        if not self.url and other.url:
+            self.url = other.url
+        if self.date_sort == "0000-00-00" and other.date_sort != "0000-00-00":
+            self.date_sort = other.date_sort
+            self.year = other.year
+        self.source_orcids |= other.source_orcids
+        self.source_names |= other.source_names
+
+
+def request_json(url: str, *, retries: int = 3, pause: float = 0.6) -> dict[str, Any]:
+    last_error: Exception | None = None
+    for attempt in range(1, retries + 1):
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Accept": "application/vnd.orcid+json; charset=utf-8, application/json",
+                "User-Agent": USER_AGENT,
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                raw = response.read().decode("utf-8")
+                return json.loads(raw)
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            last_error = exc
+            if attempt < retries:
+                time.sleep(pause * attempt)
+    raise RuntimeError(f"Could not fetch {url}: {last_error}")
+
+
+def load_members(path: Path) -> list[Member]:
+    members: list[Member] = []
+    with path.open(newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            name = (row.get("name") or "").strip()
+            if not name:
+                continue
+            members.append(Member(name=name, orcid=(row.get("orcid") or "").strip(), role=(row.get("role") or "").strip()))
+    return members
+
+
+def load_group_names(path: Path, members: Iterable[Member]) -> list[str]:
+    names = [m.name for m in members]
+    if path.exists():
+        names += [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip() and not line.startswith("#")]
+    # preserve order, remove duplicates
+    seen: set[str] = set()
+    unique = []
+    for n in names:
+        key = normalize_key(n)
+        if key not in seen:
+            seen.add(key)
+            unique.append(n)
+    return unique
+
+
+def normalize_key(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value)
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = value.lower()
+    value = value.replace("’", "'")
+    value = re.sub(r"[^a-z0-9]+", " ", value)
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def normalize_doi(value: str) -> str:
+    value = value.strip().lower()
+    value = re.sub(r"^https?://(dx\.)?doi\.org/", "", value)
+    value = re.sub(r"^doi:\s*", "", value)
+    return value.strip()
+
+
+def get_nested(obj: dict[str, Any] | None, *keys: str) -> Any:
+    cur: Any = obj
+    for key in keys:
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(key)
+    return cur
+
+
+def value_of(obj: Any) -> str:
+    if obj is None:
+        return ""
+    if isinstance(obj, str):
+        return obj.strip()
+    if isinstance(obj, dict):
+        val = obj.get("value")
+        if isinstance(val, str):
+            return val.strip()
+    return ""
+
+
+def parse_title(work: dict[str, Any]) -> str:
+    title = value_of(get_nested(work, "title", "title"))
+    subtitle = value_of(get_nested(work, "title", "subtitle"))
+    if title and subtitle:
+        return f"{title}: {subtitle}"
+    return title or "Untitled work"
+
+
+def parse_publication_date(work: dict[str, Any]) -> tuple[str, str]:
+    date = work.get("publication-date") or {}
+    year = value_of(date.get("year"))
+    month = value_of(date.get("month")) or "00"
+    day = value_of(date.get("day")) or "00"
+    if year:
+        return year, f"{year.zfill(4)}-{month.zfill(2)}-{day.zfill(2)}"
+    return "Unknown year", "0000-00-00"
+
+
+def parse_external_ids(work: dict[str, Any]) -> tuple[str, str]:
+    doi = ""
+    url = ""
+    extids = get_nested(work, "external-ids", "external-id") or []
+    if not isinstance(extids, list):
+        extids = [extids]
+    for ext in extids:
+        if not isinstance(ext, dict):
+            continue
+        typ = (ext.get("external-id-type") or "").lower()
+        val = (ext.get("external-id-value") or "").strip()
+        ext_url = value_of(ext.get("external-id-url"))
+        if typ == "doi" and val and not doi:
+            doi = normalize_doi(val)
+            url = ext_url or f"https://doi.org/{doi}"
+        elif typ in {"arxiv", "arxiv-id"} and val and not url:
+            url = ext_url or f"https://arxiv.org/abs/{val}"
+        elif ext_url and not url:
+            url = ext_url
+    explicit_url = value_of(work.get("url"))
+    if explicit_url and not url:
+        url = explicit_url
+    return doi, url
+
+
+def parse_authors(work: dict[str, Any]) -> list[str]:
+    contributors = get_nested(work, "contributors", "contributor") or []
+    if not isinstance(contributors, list):
+        contributors = [contributors]
+    authors: list[str] = []
+    for contributor in contributors:
+        if not isinstance(contributor, dict):
+            continue
+        name = value_of(contributor.get("credit-name"))
+        if not name:
+            # Fallback to contributor-orcid path name is generally not present; keep blank.
+            continue
+        if name not in authors:
+            authors.append(name)
+    return authors
+
+
+def parse_work_detail(work: dict[str, Any], member: Member) -> Publication:
+    title = parse_title(work)
+    year, date_sort = parse_publication_date(work)
+    doi, url = parse_external_ids(work)
+    venue = value_of(work.get("journal-title"))
+    pub_type = (work.get("type") or "").replace("-", " ").title()
+    authors = parse_authors(work)
+    if not authors:
+        # ORCID records sometimes lack contributor lists in public data.
+        # Use the record owner as a minimal fallback so the item remains usable.
+        authors = [member.name]
+    return Publication(
+        title=title,
+        year=year,
+        date_sort=date_sort,
+        authors=authors,
+        venue=venue,
+        pub_type=pub_type,
+        doi=doi,
+        url=url,
+        source_orcids={member.orcid} if member.orcid else set(),
+        source_names={member.name},
+    )
+
+
+def fetch_member_publications(member: Member, *, max_works: int | None = None, verbose: bool = True) -> list[Publication]:
+    if not member.orcid:
+        if verbose:
+            print(f"Skipping {member.name}: no ORCID iD in CSV", file=sys.stderr)
+        return []
+    if verbose:
+        print(f"Fetching works for {member.name} ({member.orcid})", file=sys.stderr)
+    works_url = f"{ORCID_API}/{urllib.parse.quote(member.orcid)}/works"
+    data = request_json(works_url)
+    groups = data.get("group") or []
+    put_codes: list[str] = []
+    for group in groups:
+        summaries = group.get("work-summary") if isinstance(group, dict) else None
+        if not isinstance(summaries, list):
+            continue
+        # Use first summary in the group; groups represent the same work from different sources.
+        summary = summaries[0] if summaries else None
+        put_code = str(summary.get("put-code")) if isinstance(summary, dict) and summary.get("put-code") is not None else ""
+        if put_code:
+            put_codes.append(put_code)
+    if max_works is not None:
+        put_codes = put_codes[:max_works]
+
+    pubs: list[Publication] = []
+    for idx, put_code in enumerate(put_codes, start=1):
+        detail_url = f"{ORCID_API}/{urllib.parse.quote(member.orcid)}/work/{urllib.parse.quote(put_code)}"
+        try:
+            work = request_json(detail_url)
+            pubs.append(parse_work_detail(work, member))
+        except RuntimeError as exc:
+            print(f"Warning: {member.name}: failed work {put_code}: {exc}", file=sys.stderr)
+        # Be polite to the public API.
+        if idx % 10 == 0:
+            time.sleep(0.5)
+    return pubs
+
+
+def deduplicate(publications: Iterable[Publication]) -> list[Publication]:
+    by_key: dict[str, Publication] = {}
+    for pub in publications:
+        key = pub.key()
+        if key in by_key:
+            by_key[key].merge(pub)
+        else:
+            by_key[key] = pub
+    return list(by_key.values())
+
+
+def is_member_author(author: str, group_names: Iterable[str]) -> bool:
+    a = normalize_key(author.replace(",", " "))
+    for member in group_names:
+        m = normalize_key(member)
+        parts = m.split()
+        swapped = " ".join(parts[::-1]) if len(parts) >= 2 else m
+        # Exact normalized match or conservative full-name containment.
+        if a == m or a == swapped or m in a or swapped in a:
+            return True
+    return False
+
+
+def format_authors(authors: list[str], group_names: list[str]) -> str:
+    rendered = []
+    for author in authors:
+        safe = html.escape(author)
+        if is_member_author(author, group_names):
+            safe = f"<strong>{safe}</strong>"
+        rendered.append(safe)
+    return "; ".join(rendered)
+
+
+def format_meta(pub: Publication) -> str:
+    bits: list[str] = []
+    if pub.venue:
+        bits.append(f"<em>{html.escape(pub.venue)}</em>")
+    if pub.pub_type:
+        bits.append(html.escape(pub.pub_type))
+    if pub.year != "Unknown year":
+        bits.append(html.escape(pub.year))
+    return ", ".join(bits)
+
+
+def item_class(pub: Publication) -> str:
+    t = normalize_key(pub.pub_type)
+    if "preprint" in t or "working paper" in t:
+        return "publication-item preprint"
+    if "conference" in t or "proceeding" in t:
+        return "publication-item proceedings"
+    return "publication-item"
+
+
+def render_publications_page(publications: list[Publication], group_names: list[str], generated_note: str) -> str:
+    publications.sort(key=lambda p: (p.date_sort, normalize_key(p.title)), reverse=True)
+    years: dict[str, list[Publication]] = {}
+    for pub in publications:
+        years.setdefault(pub.year, []).append(pub)
+
+    if not publications:
+        body = """
+      <h2 class="pub-year">No ORCID works found</h2>
+      <article class="publication-item">
+        <h3>No public ORCID works were downloaded.</h3>
+        <p class="pub-meta">Check <code>data/orcid_members.csv</code>, internet access, and whether the ORCID records contain public works.</p>
+      </article>
+"""
+    else:
+        parts = []
+        for year in sorted(years.keys(), key=lambda y: int(y) if y.isdigit() else -1, reverse=True):
+            parts.append(f'      <h2 class="pub-year">{html.escape(year)}</h2>')
+            for pub in years[year]:
+                links = []
+                if pub.doi:
+                    doi_url = pub.url or f"https://doi.org/{pub.doi}"
+                    links.append(f'<a href="{html.escape(doi_url)}">doi:{html.escape(pub.doi)}</a>')
+                elif pub.url:
+                    links.append(f'<a href="{html.escape(pub.url)}">link</a>')
+                source = ", ".join(sorted(pub.source_names))
+                if source:
+                    links.append("ORCID source: " + html.escape(source))
+                links_html = " | ".join(links)
+                parts.append(f"""      <article class="{item_class(pub)}">
+        <h3>{html.escape(pub.title)}</h3>
+        <p class="pub-authors">{format_authors(pub.authors, group_names)}</p>
+        <p class="pub-meta">{format_meta(pub)}</p>
+        <p class="pub-links">{links_html}</p>
+      </article>""")
+        body = "\n".join(parts)
+
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Computational Mechanics of Soft Materials Group | Publications</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html">Opening</a>
+        <a href="people.html">People</a>
+        <a class="active" href="publications.html">Publications</a>
+        <a href="projects.html">Projects</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-layout">
+    <section class="page-opening">
+      <p class="eyebrow">Publications</p>
+      <h1>Selected and automatically updated publications</h1>
+      <p class="lead">
+        The publication list is generated from public ORCID records and organized by year. Group members are shown in <strong>bold</strong>.
+      </p>
+      <p>
+        The page can be regenerated on demand or automatically on the server, so recent papers, preprints, and proceedings can be added without manual editing of the HTML file.
+      </p>
+    </section>
+
+    <p class="pub-source-note">
+      {html.escape(generated_note)}
+    </p>
+
+    <section class="publication-list" aria-label="Publication list">
+{body}
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Computational Mechanics of Soft Materials Group</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+"""
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Generate publications.html from public ORCID works.")
+    parser.add_argument("--members", default="data/orcid_members.csv", help="CSV with columns name,orcid,role")
+    parser.add_argument("--group-members", default="data/group_members.txt", help="Names to bold in author lists")
+    parser.add_argument("--out", default="publications.html", help="Output HTML file")
+    parser.add_argument("--max-works", type=int, default=None, help="Limit works per ORCID record, useful for testing")
+    parser.add_argument("--note", default="Generated from public ORCID records. Re-run tools/generate_publications_from_orcid.py to update this page.")
+    args = parser.parse_args()
+
+    root = Path.cwd()
+    members_path = root / args.members
+    if not members_path.exists():
+        print(f"Missing members file: {members_path}", file=sys.stderr)
+        return 2
+
+    members = load_members(members_path)
+    group_names = load_group_names(root / args.group_members, members)
+    all_publications: list[Publication] = []
+    for member in members:
+        all_publications.extend(fetch_member_publications(member, max_works=args.max_works))
+
+    publications = deduplicate(all_publications)
+    html_text = render_publications_page(publications, group_names, args.note)
+    out_path = root / args.out
+    out_path.write_text(html_text, encoding="utf-8")
+    print(f"Wrote {out_path} with {len(publications)} unique publications.")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

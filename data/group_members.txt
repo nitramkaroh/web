@@ -1,0 +1,7 @@
+# SOFFA project team from https://sites.google.com/view/soffaproject/team?authuser=0
+# One person per line. Use this list to bold matching publication authors.
+Martin Horák
+Michal Šmejkal
+Ondřej Faltus
+Marco Amato
+Riccardo Voso
