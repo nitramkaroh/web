@@ -30,6 +30,16 @@ tools/make-carousel-video.sh path/to/HorseShoe.avi 02-horseshoe
 ```
 
 That writes `02-horseshoe.mp4` (H.264) plus a poster frame, and prints the
-slide markup to paste into `index.html`. A video slide is muted, loops, and
-plays only while its slide is visible; under `prefers-reduced-motion` it does
-not autoplay and gets real controls instead.
+slide markup to paste into `index.html`.
+
+A video slide is muted and plays only while its slide is visible. What happens
+when it finishes depends on how many slides there are:
+
+- **one slide** &mdash; it loops, since there is nowhere to go
+- **more than one** &mdash; it plays once and the carousel moves to the next
+  slide as soon as the animation ends, so nothing is cut off mid-way and
+  nothing sits on a last frame
+
+Image slides advance on the `data-autoplay` interval instead. Under
+`prefers-reduced-motion` nothing autoplays or auto-advances, and videos get
+real controls.

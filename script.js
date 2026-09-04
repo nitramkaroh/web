@@ -27,102 +27,163 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
   const dots = carousel.querySelector('.carousel-dots');
   const prev = carousel.querySelector('.carousel-arrow.prev');
   const next = carousel.querySelector('.carousel-arrow.next');
-
-  // One figure is not a carousel: keep it visible, drop the controls.
-  const reduceMotionOnly = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (slides.length === 1) {
-    carousel.classList.add('is-single');
-    slides[0].classList.add('is-active');
-    slides[0].querySelectorAll('video').forEach((video) => {
-      slides[0].classList.add('has-video');
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.setAttribute('playsinline', '');
-      if (reduceMotionOnly) { video.controls = true; return; }
-      const started = video.play();
-      if (started && started.catch) started.catch(() => {});
-      slides[0].classList.add('is-playing');
-    });
-    return;
-  }
-
+  const single = slides.length === 1;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const interval = Number(carousel.dataset.autoplay) || 0;
 
-  // Inline muted playback is the only kind browsers autoplay. Under reduced
-  // motion nothing plays by itself, so give those viewers real controls.
+  // Inline muted playback is the only kind browsers autoplay. A video loops
+  // only when it is the whole carousel; with siblings it plays once and the
+  // carousel moves on when it ends. Under reduced motion nothing plays by
+  // itself, so those viewers get real controls instead.
   slides.forEach((slide) => {
     const videos = slide.querySelectorAll('video');
     if (videos.length === 0) return;
     slide.classList.add('has-video');
     videos.forEach((video) => {
       video.muted = true;
-      video.loop = true;
+      video.loop = single;
       video.playsInline = true;
       video.setAttribute('playsinline', '');
       video.preload = 'metadata';
       if (reduceMotion) video.controls = true;
     });
   });
-  const interval = Number(carousel.dataset.autoplay) || 0;
+
+  function playIn(slide) {
+    let started = false;
+    slide.querySelectorAll('video').forEach((video) => {
+      if (reduceMotion) return;
+      const p = video.play();
+      if (p && p.catch) p.catch(() => {});
+      started = true;
+    });
+    slide.classList.toggle('is-playing', started);
+    return started;
+  }
+
+  function stopIn(slide, rewind) {
+    slide.querySelectorAll('video').forEach((video) => {
+      video.pause();
+      if (rewind) video.currentTime = 0;
+    });
+    slide.classList.remove('is-playing');
+  }
+
+  if (single) {
+    carousel.classList.add('is-single');
+    slides[0].classList.add('is-active');
+    playIn(slides[0]);
+    return;
+  }
+
   let index = Math.max(slides.findIndex((s) => s.classList.contains('is-active')), 0);
   let timer = null;
+  let token = 0;          // invalidates anything scheduled for a previous slide
 
   const buttons = slides.map((_, i) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.setAttribute('role', 'tab');
     b.setAttribute('aria-label', `Figure ${i + 1} of ${slides.length}`);
-    b.addEventListener('click', () => { show(i); restart(); });
+    b.addEventListener('click', () => show(i));
     dots?.appendChild(b);
     return b;
   });
 
+  slides.forEach((slide) => {
+    slide.querySelectorAll('video').forEach((video) => {
+      // If a file cannot play at all, that slide falls back to the timer.
+      video.addEventListener('error', () => { slide.dataset.videoBroken = 'true'; });
+    });
+  });
+
+  function clearTimer() {
+    if (timer) { clearTimeout(timer); timer = null; }
+  }
+
+  // A video slide hands over when its animation finishes, so nothing is cut
+  // off mid-way and nothing sits on a last frame. "ended" is the intended
+  // signal, but it does not always fire - a file whose container duration
+  // does not match its frames can stall on the final frame instead - so the
+  // near-end check and the backstop timer make sure the carousel cannot
+  // freeze on a video. Whichever fires first wins; the token discards the rest.
+  function scheduleAdvance() {
+    clearTimer();
+    if (reduceMotion) return;
+
+    const slide = slides[index];
+    const video = slide.querySelector('video');
+    const mine = token;
+    const advance = () => { if (mine === token) show(index + 1); };
+
+    if (video && slide.dataset.videoBroken !== 'true') {
+      // duration has to be read live: at the moment a slide is shown the
+      // metadata may not have arrived yet and it is still NaN.
+      const lengthOf = () =>
+        (Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 0);
+
+      const onEnded = () => advance();
+      const onTime = () => {
+        const length = lengthOf();
+        if (length && video.currentTime >= length - 0.15) advance();
+      };
+      const armBackstop = () => {
+        if (mine !== token) return;
+        clearTimer();
+        const length = lengthOf();
+        timer = setTimeout(advance, (length ? length * 1000 : interval || 7000) + 1500);
+      };
+
+      video.addEventListener('ended', onEnded, { once: true });
+      video.addEventListener('timeupdate', onTime);
+      video.addEventListener('loadedmetadata', armBackstop, { once: true });
+      // Detach when this slide is left, so listeners do not pile up.
+      slide._carouselCleanup = () => {
+        video.removeEventListener('ended', onEnded);
+        video.removeEventListener('timeupdate', onTime);
+        video.removeEventListener('loadedmetadata', armBackstop);
+      };
+
+      armBackstop();
+    } else if (interval > 0) {
+      timer = setTimeout(advance, interval);
+    }
+  }
+
   function show(i) {
+    token += 1;
+    slides.forEach((slide) => {
+      if (slide._carouselCleanup) { slide._carouselCleanup(); slide._carouselCleanup = null; }
+    });
     index = (i + slides.length) % slides.length;
     slides.forEach((slide, k) => {
       const on = k === index;
       slide.classList.toggle('is-active', on);
       slide.setAttribute('aria-hidden', String(!on));
-      // Keep hidden slides out of the tab order.
       slide.querySelectorAll('a').forEach((a) => {
         if (on) { a.removeAttribute('tabindex'); } else { a.setAttribute('tabindex', '-1'); }
       });
-      // Only the visible slide is allowed to play; the rest rewind and stop,
-      // so nothing decodes video off-screen.
-      slide.querySelectorAll('video').forEach((video) => {
-        if (on && !reduceMotion) {
-          const started = video.play();
-          if (started && started.catch) started.catch(() => {});   // autoplay refused
-          slide.classList.add('is-playing');
-        } else {
-          video.pause();
-          if (!on) video.currentTime = 0;
-          slide.classList.remove('is-playing');
-        }
-      });
+      if (on) { playIn(slide); } else { stopIn(slide, true); }
     });
     buttons.forEach((b, k) => b.setAttribute('aria-selected', String(k === index)));
+    scheduleAdvance();
   }
 
-  function restart() {
-    if (timer) clearInterval(timer);
-    if (interval > 0 && !reduceMotion) timer = setInterval(() => show(index + 1), interval);
-  }
-
-  prev?.addEventListener('click', () => { show(index - 1); restart(); });
-  next?.addEventListener('click', () => { show(index + 1); restart(); });
+  prev?.addEventListener('click', () => show(index - 1));
+  next?.addEventListener('click', () => show(index + 1));
 
   carousel.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft') { show(index - 1); restart(); }
-    if (event.key === 'ArrowRight') { show(index + 1); restart(); }
+    if (event.key === 'ArrowLeft') show(index - 1);
+    if (event.key === 'ArrowRight') show(index + 1);
   });
 
-  // Do not animate under someone's cursor or while they are reading a caption.
-  carousel.addEventListener('mouseenter', () => timer && clearInterval(timer));
-  carousel.addEventListener('mouseleave', restart);
-  carousel.addEventListener('focusin', () => timer && clearInterval(timer));
-  carousel.addEventListener('focusout', restart);
+  // Hold still under a cursor, or while someone is reading a caption.
+  function hold() { clearTimer(); stopIn(slides[index], false); }
+  function resume() { playIn(slides[index]); scheduleAdvance(); }
+  carousel.addEventListener('mouseenter', hold);
+  carousel.addEventListener('mouseleave', resume);
+  carousel.addEventListener('focusin', hold);
+  carousel.addEventListener('focusout', resume);
 
   // Swipe on touch devices.
   let startX = null;
@@ -130,10 +191,9 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
   carousel.addEventListener('touchend', (e) => {
     if (startX === null) return;
     const dx = e.changedTouches[0].clientX - startX;
-    if (Math.abs(dx) > 40) { show(dx < 0 ? index + 1 : index - 1); restart(); }
+    if (Math.abs(dx) > 40) show(dx < 0 ? index + 1 : index - 1);
     startX = null;
   }, { passive: true });
 
   show(index);
-  restart();
 });
