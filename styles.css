@@ -241,17 +241,17 @@ a:hover { text-decoration-color: currentColor; }
     var(--soft-bg);
 }
 
-.hero .container { width: min(100% - 2.5rem, 1180px); }
+.hero .container { width: min(100% - 2.5rem, 1240px); }
 
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 560px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 660px);
   gap: 2.25rem;
   align-items: center;
   padding: 3.5rem 0 3.5rem;
 }
 .hero-text { max-width: 46ch; }
-.hero-figure { --band-h: 420px; width: 100%; }
+.hero-figure { --band-h: 480px; width: 100%; }
 
 .hero h1 { margin-bottom: .75rem; }
 
@@ -306,20 +306,20 @@ a:hover { text-decoration-color: currentColor; }
 .carousel-slide figure { margin: 0; }
 
 .carousel-media {
-  display: grid;
-  place-items: center;
+  position: relative;
   height: var(--band-h, 320px);
-  padding: .6rem;
   background: var(--page-bg);
 }
 
 .carousel-slide img,
 .carousel-slide video {
+  position: absolute;
+  top: .6rem;
+  left: .6rem;
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: calc(var(--band-h, 320px) - 1.2rem);  /* frame height less its padding */
+  width: calc(100% - 1.2rem);
+  height: calc(100% - 1.2rem);
+  object-fit: contain;    /* letterboxed in the frame, never cropped */
   border-radius: 4px;
 }
 
