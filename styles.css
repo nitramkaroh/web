@@ -311,7 +311,8 @@ a:hover { text-decoration-color: currentColor; }
   background: var(--soft-bg);
 }
 
-.carousel-slide img {
+.carousel-slide img,
+.carousel-slide video {
   display: block;
   width: auto;
   height: auto;
@@ -319,6 +320,25 @@ a:hover { text-decoration-color: currentColor; }
   max-height: 100%;       /* never upscaled: a small figure is letterboxed */
   border-radius: 4px;
 }
+
+/* A video slide gets a small corner badge so it reads as playable. */
+.carousel-slide figure { position: relative; }
+.carousel-slide.has-video .carousel-media::after {
+  content: "\25B6";
+  position: absolute;
+  right: .6rem;
+  bottom: .6rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  color: var(--accent);
+  font-size: .6rem;
+  pointer-events: none;
+}
+.carousel-slide.has-video.is-playing .carousel-media::after { content: none; }
 
 .carousel-slide figcaption {
   padding: .7rem .9rem .8rem;

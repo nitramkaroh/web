@@ -19,3 +19,17 @@ Sizing: the hero figure column is at most 420 px wide on a desktop, so an
 image about **840 px wide** covers a 2x display. Anything smaller is shown
 at its native size rather than upscaled, to keep it sharp. Landscape crops
 around 3:2 fit the frame with least letterboxing.
+
+
+## Animations
+
+ParaView writes Motion-JPEG AVI, which no browser plays. Convert first:
+
+```bash
+tools/make-carousel-video.sh path/to/HorseShoe.avi 02-horseshoe
+```
+
+That writes `02-horseshoe.mp4` (H.264) plus a poster frame, and prints the
+slide markup to paste into `index.html`. A video slide is muted, loops, and
+plays only while its slide is visible; under `prefers-reduced-motion` it does
+not autoplay and gets real controls instead.
