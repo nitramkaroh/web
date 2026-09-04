@@ -241,14 +241,16 @@ a:hover { text-decoration-color: currentColor; }
     var(--soft-bg);
 }
 
+.hero .container { width: min(100% - 2.5rem, 1180px); }
+
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
-  gap: 2.75rem;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 560px);
+  gap: 2.25rem;
   align-items: center;
   padding: 3.5rem 0 3.5rem;
 }
-.hero-text { max-width: 58ch; }
+.hero-text { max-width: 46ch; }
 .hero-figure { --band-h: 420px; width: 100%; }
 
 .hero h1 { margin-bottom: .75rem; }

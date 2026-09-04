@@ -337,11 +337,43 @@ def is_member_author(author: str, group_names: Iterable[str]) -> bool:
     return False
 
 
+# ORCID records are deposited by many hands, so the same person turns up as
+# "Horak, Martin" in one and "Martin Horak" in another, with the diacritics
+# dropped either way. Canonical spellings, keyed by the accent-stripped name.
+CANONICAL_NAMES = {
+    "martin horak": "Martin Hor\u00e1k",
+    "michal smejkal": "Michal \u0160mejkal",
+    "ondrej faltus": "Ond\u0159ej Faltus",
+    "marco amato": "Marco Amato",
+    "riccardo voso": "Riccardo Voso",
+    "borek patzak": "Bo\u0159ek Patz\u00e1k",
+    "petr havlasek": "Petr Havl\u00e1sek",
+    "milan jirasek": "Milan Jir\u00e1sek",
+    "ondrej rokos": "Ond\u0159ej Roko\u0161",
+    "martin doskar": "Martin Do\u0161k\u00e1\u0159",
+    "pavel rychnovsky": "Pavel Rychnovsk\u00fd",
+    "jan havelka": "Jan Havelka",
+}
+
+
+def canonical_author(author: str) -> str:
+    """Normalize one author name: "Last, First" -> "First Last", then apply
+    the canonical spelling if the person is known."""
+    name = author.strip()
+    if name.count(",") == 1:
+        last, first = (part.strip() for part in name.split(","))
+        if last and first:
+            name = f"{first} {last}"
+    stripped = normalize_key(name)
+    return CANONICAL_NAMES.get(stripped, name)
+
+
 def format_authors(authors: list[str], group_names: list[str]) -> str:
     rendered = []
     for author in authors:
-        safe = html.escape(author)
-        if is_member_author(author, group_names):
+        name = canonical_author(author)
+        safe = html.escape(name)
+        if is_member_author(name, group_names):
             safe = f"<strong>{safe}</strong>"
         rendered.append(safe)
     return "; ".join(rendered)
@@ -413,16 +445,18 @@ def render_publications_page(publications: list[Publication], group_names: list[
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html">
-        <object class="brand-logo" data="figs/MSMT_logo_text_bw_inverz_cz.pdf" type="application/pdf" aria-label="MSMT logo">
-          <span class="brand-logo-fallback">MSMT</span>
-        </object>
-        <span>Computational Mechanics of Soft Materials Group</span>
+        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <span class="brand-text">
+          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-sub">Czech Technical University in Prague</span>
+        </span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav class="site-nav" aria-label="Main navigation">
         <a href="people.html">People</a>
-        <a class="active" href="publications.html">Publications</a>
+        <a href="publications.html" class="active">Publications</a>
         <a href="projects.html">Projects</a>
+        <a href="news.html">News</a>
         <a href="openings.html">Openings</a>
       </nav>
     </div>
@@ -443,7 +477,45 @@ def render_publications_page(publications: list[Publication], group_names: list[
   </main>
 
   <footer class="site-footer">
-    <div class="container">Computational Mechanics of Soft Materials Group</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Computational Mechanics of Soft Materials</h3>
+          <p>
+            Mathematical models, numerical methods and open scientific software for soft
+            solids, surface mechanics, instabilities, contact and multiphysics problems.
+          </p>
+          <p>
+            Department of Mechanics, Faculty of Civil Engineering<br />
+            Czech Technical University in Prague<br />
+            Th&aacute;kurova 7, 166 29 Prague 6, Czech Republic
+          </p>
+        </div>
+        <div>
+          <h3>Pages</h3>
+          <ul class="footer-links">
+            <li><a href="people.html">People</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="openings.html">Openings</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Affiliation</h3>
+          <div class="footer-logos">
+            <a href="https://www.cvut.cz/en"><img src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" /></a>
+          </div>
+          <p>
+            Funding is acknowledged on the
+            <a href="projects.html">projects</a> page.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        Computational Mechanics of Soft Materials Group
+      </div>
+    </div>
   </footer>
 
   <script src="script.js"></script>
