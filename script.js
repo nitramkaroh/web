@@ -6,21 +6,12 @@ if (navToggle && nav) {
     const isOpen = nav.classList.toggle('is-open');
     navToggle.setAttribute('aria-expanded', String(isOpen));
   });
-}
 
-const slides = [...document.querySelectorAll('.slide')];
-const prevButton = document.querySelector('.carousel-control.prev');
-const nextButton = document.querySelector('.carousel-control.next');
-let currentSlide = 0;
-
-function showSlide(index) {
-  if (!slides.length) return;
-  slides[currentSlide].classList.remove('is-active');
-  currentSlide = (index + slides.length) % slides.length;
-  slides[currentSlide].classList.add('is-active');
-}
-
-if (prevButton && nextButton && slides.length) {
-  prevButton.addEventListener('click', () => showSlide(currentSlide - 1));
-  nextButton.addEventListener('click', () => showSlide(currentSlide + 1));
+  // Close the menu after following a link on a phone.
+  nav.addEventListener('click', (event) => {
+    if (event.target.tagName === 'A') {
+      nav.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 }

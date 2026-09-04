@@ -9,13 +9,20 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <span class="brand-text">
+          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-sub">Czech Technical University in Prague</span>
+        </span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="index.html">Opening</a>
         <a href="people.html">People</a>
         <a href="publications.html">Publications</a>
-        <a class="active" href="projects.html">Projects</a>
+        <a href="projects.html" class="active">Projects</a>
+        <a href="news.html">News</a>
+        <a href="openings.html">Openings</a>
       </nav>
     </div>
   </header>
@@ -36,13 +43,29 @@
       <h2>Active projects</h2>
       <div class="project-list">
         <article class="project-card">
-          <div class="project-image placeholder-image">Image</div>
+          <div class="project-image">
+            <img class="edf-logo" src="https://defence-industry-space.ec.europa.eu/sites/default/files/styles/oe_theme_medium_no_crop/public/2023-03/EDFWP-23%20-%20Visuals%20-%20SQUARE5.png?itok=tW3I6oAL" alt="European Defence Fund visual" loading="lazy" />
+          </div>
           <div class="project-body">
-            <time>Jan 2026 – Dec 2028</time>
-            <h3>Project title placeholder</h3>
-            <p>Funding agency | Project ID</p>
-            <p>Principal investigator: Name</p>
-            <p>Collaboration and short project description.</p>
+            <time>48 months</time>
+            <h3>PRIORITY: Disruptive Materials for Submarine Invisibility</h3>
+            <p>EDF-2025-LS-RA-SMERO | Proposal No. 101304832</p>
+            <p>Type of action: EDF-LS | Activity: EDF-2025-LS-RA-SMERO-NT</p>
+            <p>Czech PI: Martin Horák</p>
+            <p>European Defence Fund project on disruptive materials for submarine invisibility.</p>
+          </div>
+        </article>
+        <article class="project-card">
+          <div class="project-image">
+            <img class="project-logo" src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" />
+          </div>
+          <div class="project-body">
+            <time>Feb 2026 – Dec 2026</time>
+            <h3>GAČR Near-Miss Projects by CVUT</h3>
+            <p>Czech Technical University in Prague | Institutional support</p>
+            <p>Support period: 02/2026–12/2026</p>
+            <p>Institutional support for the group provided through the CTU GAČR Near-Miss Projects scheme.</p>
+            <p>Support amount: 556 160 Kc.</p>
           </div>
         </article>
         <article class="project-card">
@@ -62,12 +85,15 @@
       <h2>Past projects</h2>
       <div class="project-list">
         <article class="project-card">
-          <div class="project-image placeholder-image">Image</div>
+          <div class="project-image">
+            <img class="msmt-logo" src="figs/msmt-logo.png" alt="Ministry of Education, Youth and Sports of the Czech Republic" loading="lazy" />
+          </div>
           <div class="project-body">
-            <time>Jan 2020 – Dec 2024</time>
-            <h3>Past project title</h3>
-            <p>Funding agency | Project ID</p>
-            <p>Funding: amount or note</p>
+            <time>2023 – 2025</time>
+            <h3>SOFFA</h3>
+            <p>MSMT ERC CZ | Project No. LL2310</p>
+            <p>Soft surfaces: constitutive models, instabilities, and numerics.</p>
+            <p>State support: 13 903 thousand CZK.</p>
           </div>
         </article>
       </div>
@@ -75,7 +101,45 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">Computational Mechanics of Soft Materials Group</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Computational Mechanics of Soft Materials</h3>
+          <p>
+            Mathematical models, numerical methods and open scientific software for soft
+            solids, surface mechanics, instabilities, contact and multiphysics problems.
+          </p>
+          <p>
+            Department of Mechanics, Faculty of Civil Engineering<br />
+            Czech Technical University in Prague<br />
+            Th&aacute;kurova 7, 166 29 Prague 6, Czech Republic
+          </p>
+        </div>
+        <div>
+          <h3>Pages</h3>
+          <ul class="footer-links">
+            <li><a href="people.html">People</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="openings.html">Openings</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Affiliation</h3>
+          <div class="footer-logos">
+            <a href="https://www.cvut.cz/en"><img src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" /></a>
+          </div>
+          <p>
+            Funding is acknowledged on the
+            <a href="projects.html">projects</a> page.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        Computational Mechanics of Soft Materials Group
+      </div>
+    </div>
   </footer>
 
   <script src="script.js"></script>

@@ -30,6 +30,7 @@ from typing import Any, Iterable
 
 ORCID_API = "https://pub.orcid.org/v3.0"
 USER_AGENT = "CMSM-ORCID-Publications/1.0 (static-site-generator)"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 @dataclass
@@ -37,6 +38,7 @@ class Member:
     name: str
     orcid: str = ""
     role: str = ""
+    start_year: int | None = None
 
 
 @dataclass
@@ -105,7 +107,16 @@ def load_members(path: Path) -> list[Member]:
             name = (row.get("name") or "").strip()
             if not name:
                 continue
-            members.append(Member(name=name, orcid=(row.get("orcid") or "").strip(), role=(row.get("role") or "").strip()))
+            start_year_str = (row.get("start_year") or "").strip()
+            start_year = int(start_year_str) if start_year_str.isdigit() else None
+            members.append(
+                Member(
+                    name=name,
+                    orcid=(row.get("orcid") or "").strip(),
+                    role=(row.get("role") or "").strip(),
+                    start_year=start_year,
+                )
+            )
     return members
 
 
@@ -274,7 +285,10 @@ def fetch_member_publications(member: Member, *, max_works: int | None = None, v
         detail_url = f"{ORCID_API}/{urllib.parse.quote(member.orcid)}/work/{urllib.parse.quote(put_code)}"
         try:
             work = request_json(detail_url)
-            pubs.append(parse_work_detail(work, member))
+            pub = parse_work_detail(work, member)
+            if member.start_year is not None and pub.year.isdigit() and int(pub.year) < member.start_year:
+                continue
+            pubs.append(pub)
         except RuntimeError as exc:
             print(f"Warning: {member.name}: failed work {put_code}: {exc}", file=sys.stderr)
         # Be polite to the public API.
@@ -292,6 +306,23 @@ def deduplicate(publications: Iterable[Publication]) -> list[Publication]:
         else:
             by_key[key] = pub
     return list(by_key.values())
+
+
+def is_arxiv_preprint(pub: Publication) -> bool:
+    venue = normalize_key(pub.venue)
+    url = pub.url.lower()
+    doi = pub.doi.lower()
+    return venue == "arxiv" or "arxiv.org" in url or doi.startswith("10.48550/arxiv.")
+
+
+def remove_redundant_preprints(publications: Iterable[Publication]) -> list[Publication]:
+    pubs = list(publications)
+    published_titles = {
+        normalize_key(pub.title)
+        for pub in pubs
+        if not is_arxiv_preprint(pub)
+    }
+    return [pub for pub in pubs if not (is_arxiv_preprint(pub) and normalize_key(pub.title) in published_titles)]
 
 
 def is_member_author(author: str, group_names: Iterable[str]) -> bool:
@@ -361,9 +392,6 @@ def render_publications_page(publications: list[Publication], group_names: list[
                     links.append(f'<a href="{html.escape(doi_url)}">doi:{html.escape(pub.doi)}</a>')
                 elif pub.url:
                     links.append(f'<a href="{html.escape(pub.url)}">link</a>')
-                source = ", ".join(sorted(pub.source_names))
-                if source:
-                    links.append("ORCID source: " + html.escape(source))
                 links_html = " | ".join(links)
                 parts.append(f"""      <article class="{item_class(pub)}">
         <h3>{html.escape(pub.title)}</h3>
@@ -384,13 +412,18 @@ def render_publications_page(publications: list[Publication], group_names: list[
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
+      <a class="brand" href="index.html">
+        <object class="brand-logo" data="figs/MSMT_logo_text_bw_inverz_cz.pdf" type="application/pdf" aria-label="MSMT logo">
+          <span class="brand-logo-fallback">MSMT</span>
+        </object>
+        <span>Computational Mechanics of Soft Materials Group</span>
+      </a>
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="index.html">Opening</a>
         <a href="people.html">People</a>
         <a class="active" href="publications.html">Publications</a>
         <a href="projects.html">Projects</a>
+        <a href="openings.html">Openings</a>
       </nav>
     </div>
   </header>
@@ -398,18 +431,11 @@ def render_publications_page(publications: list[Publication], group_names: list[
   <main class="container page-layout">
     <section class="page-opening">
       <p class="eyebrow">Publications</p>
-      <h1>Selected and automatically updated publications</h1>
+      <h1>Publications</h1>
       <p class="lead">
         The publication list is generated from public ORCID records and organized by year. Group members are shown in <strong>bold</strong>.
       </p>
-      <p>
-        The page can be regenerated on demand or automatically on the server, so recent papers, preprints, and proceedings can be added without manual editing of the HTML file.
-      </p>
     </section>
-
-    <p class="pub-source-note">
-      {html.escape(generated_note)}
-    </p>
 
     <section class="publication-list" aria-label="Publication list">
 {body}
@@ -426,6 +452,13 @@ def render_publications_page(publications: list[Publication], group_names: list[
 """
 
 
+def resolve_project_path(path_str: str) -> Path:
+    path = Path(path_str)
+    if path.is_absolute():
+        return path
+    return PROJECT_ROOT / path
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate publications.html from public ORCID works.")
     parser.add_argument("--members", default="data/orcid_members.csv", help="CSV with columns name,orcid,role")
@@ -435,21 +468,20 @@ def main() -> int:
     parser.add_argument("--note", default="Generated from public ORCID records. Re-run tools/generate_publications_from_orcid.py to update this page.")
     args = parser.parse_args()
 
-    root = Path.cwd()
-    members_path = root / args.members
+    members_path = resolve_project_path(args.members)
     if not members_path.exists():
         print(f"Missing members file: {members_path}", file=sys.stderr)
         return 2
 
     members = load_members(members_path)
-    group_names = load_group_names(root / args.group_members, members)
+    group_names = load_group_names(resolve_project_path(args.group_members), members)
     all_publications: list[Publication] = []
     for member in members:
         all_publications.extend(fetch_member_publications(member, max_works=args.max_works))
 
-    publications = deduplicate(all_publications)
+    publications = remove_redundant_preprints(deduplicate(all_publications))
     html_text = render_publications_page(publications, group_names, args.note)
-    out_path = root / args.out
+    out_path = resolve_project_path(args.out)
     out_path.write_text(html_text, encoding="utf-8")
     print(f"Wrote {out_path} with {len(publications)} unique publications.")
     return 0

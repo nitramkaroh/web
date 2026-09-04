@@ -9,42 +9,95 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <span class="brand-text">
+          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-sub">Czech Technical University in Prague</span>
+        </span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav class="site-nav" aria-label="Main navigation">
-        <a class="active" href="index.html">Opening</a>
         <a href="people.html">People</a>
         <a href="publications.html">Publications</a>
         <a href="projects.html">Projects</a>
+        <a href="news.html">News</a>
+        <a href="openings.html">Openings</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero-carousel" aria-label="Featured images">
-      <button class="carousel-control prev" aria-label="Previous slide">‹</button>
-      <div class="carousel-track">
-        <article class="slide is-active">
-          <div class="slide-image placeholder-image">Carousel image 1</div>
-        </article>
-        <article class="slide">
-          <div class="slide-image placeholder-image">Carousel image 2</div>
-        </article>
-        <article class="slide">
-          <div class="slide-image placeholder-image">Carousel image 3</div>
-        </article>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <p class="eyebrow">Czech Technical University in Prague</p>
+          <h1>Computational Mechanics of Soft Materials</h1>
+          <p class="hero-lead">
+            We develop mathematical models, numerical methods and open scientific software for
+            soft solids &mdash; surface mechanics, instabilities, contact and multiphysics coupling.
+          </p>
+          <p class="hero-affil">
+            <strong>Department of Mechanics</strong>, Faculty of Civil Engineering &middot;
+            in collaboration with the Institute of Information Theory and Automation, CAS
+          </p>
+          <p class="hero-actions">
+            <a class="btn btn-primary" href="publications.html">Publications</a>
+            <a class="btn" href="people.html">The team</a>
+            <a class="btn" href="openings.html">Open positions</a>
+          </p>
+        </div>
+        <figure class="hero-figure">
+        <svg viewBox="-33.5 -37.0 228.6 161.1" role="img"
+             aria-label="A honeycomb lattice compressed and buckling towards its base">
+          <g stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+            <polygon points="0.0,-26.0 22.5,-13.0 22.6,13.0 0.7,25.8 -22.4,13.0 -22.5,-13.0" fill="var(--fig-1, #e6f0f5)" fill-opacity=".92"/>
+            <polygon points="45.0,-26.0 67.5,-13.0 67.6,13.0 45.7,25.8 22.6,13.0 22.5,-13.0" fill="var(--fig-1, #e6f0f5)" fill-opacity=".92"/>
+            <polygon points="90.1,-26.0 112.6,-13.0 112.7,13.0 90.8,25.8 67.6,13.0 67.5,-13.0" fill="var(--fig-1, #e6f0f5)" fill-opacity=".92"/>
+            <polygon points="135.1,-26.0 157.6,-13.0 157.7,13.0 135.8,25.8 112.7,13.0 112.6,-13.0" fill="var(--fig-1, #e6f0f5)" fill-opacity=".92"/>
+            <polygon points="22.6,13.0 45.7,25.8 49.0,50.6 28.1,62.2 3.9,50.6 0.7,25.8" fill="var(--fig-2, #c2dce8)" fill-opacity=".92"/>
+            <polygon points="67.6,13.0 90.8,25.8 94.0,50.6 73.1,62.2 49.0,50.6 45.7,25.8" fill="var(--fig-2, #c2dce8)" fill-opacity=".92"/>
+            <polygon points="112.7,13.0 135.8,25.8 139.0,50.6 118.2,62.2 94.0,50.6 90.8,25.8" fill="var(--fig-2, #c2dce8)" fill-opacity=".92"/>
+            <polygon points="157.7,13.0 180.8,25.8 184.1,50.6 163.2,62.2 139.0,50.6 135.8,25.8" fill="var(--fig-2, #c2dce8)" fill-opacity=".92"/>
+            <polygon points="3.9,50.6 28.1,62.2 26.5,83.3 -1.1,92.5 -18.6,83.3 -16.9,62.2" fill="var(--fig-3, #8ec2d5)" fill-opacity=".92"/>
+            <polygon points="49.0,50.6 73.1,62.2 71.5,83.3 43.9,92.5 26.5,83.3 28.1,62.2" fill="var(--fig-3, #8ec2d5)" fill-opacity=".92"/>
+            <polygon points="94.0,50.6 118.2,62.2 116.5,83.3 89.0,92.5 71.5,83.3 73.1,62.2" fill="var(--fig-3, #8ec2d5)" fill-opacity=".92"/>
+            <polygon points="139.0,50.6 163.2,62.2 161.6,83.3 134.0,92.5 116.5,83.3 118.2,62.2" fill="var(--fig-3, #8ec2d5)" fill-opacity=".92"/>
+            <polygon points="26.5,83.3 43.9,92.5 26.1,107.5 -6.1,113.1 -18.9,107.5 -1.1,92.5" fill="var(--fig-4, #4e97b5)" fill-opacity=".92"/>
+            <polygon points="71.5,83.3 89.0,92.5 71.2,107.5 39.0,113.1 26.1,107.5 43.9,92.5" fill="var(--fig-4, #4e97b5)" fill-opacity=".92"/>
+            <polygon points="116.5,83.3 134.0,92.5 116.2,107.5 84.0,113.1 71.2,107.5 89.0,92.5" fill="var(--fig-4, #4e97b5)" fill-opacity=".92"/>
+            <polygon points="161.6,83.3 179.0,92.5 161.2,107.5 129.0,113.1 116.2,107.5 134.0,92.5" fill="var(--fig-4, #4e97b5)" fill-opacity=".92"/>
+          </g>
+        </svg>
+        </figure>
       </div>
-      <button class="carousel-control next" aria-label="Next slide">›</button>
     </section>
 
     <section class="container content-section">
-      <h2>About</h2>
-      <p>
-        The Computational Mechanics of Soft Materials Group develops mathematical models, numerical methods, and scientific software for soft solids, surface mechanics, instabilities, contact, and multiphysics problems.
+      <h2>Research</h2>
+      <p class="lead">
+        The group combines nonlinear continuum mechanics, variational modeling, finite element
+        methods and open-source implementation, with applications in advanced soft materials
+        and structures.
       </p>
-      <p>
-        The group combines nonlinear continuum mechanics, variational modeling, finite element methods, and open-source implementation, with applications in advanced soft materials and structures.
-      </p>
+      <div class="topic-grid">
+        <div class="topic">
+          <h3>Soft surfaces and surface energy</h3>
+          <p>Surface elasticity, curvature dependence and the instabilities that surface stress drives in soft solids.</p>
+        </div>
+        <div class="topic">
+          <h3>Contact of highly deformable bodies</h3>
+          <p>Third-medium contact formulations and regularizations that stay robust when the contact zone dominates the problem.</p>
+        </div>
+        <div class="topic">
+          <h3>Active and multiphysics materials</h3>
+          <p>Magneto- and electro-elasticity, pneumatic actuation, and coupling that changes the effective response of a structure.</p>
+        </div>
+        <div class="topic">
+          <h3>Scientific software</h3>
+          <p>Open-source finite element development, from constitutive models to solvers, in OOFEM and MuPIF.</p>
+        </div>
+      </div>
     </section>
 
     <section class="container content-section">
@@ -73,19 +126,64 @@
       </div>
       <div class="publication-list compact">
         <article class="publication-item">
-          <h3>Publication title placeholder</h3>
-          <p>Authors, journal/conference, year.</p>
+          <h3><a href="publications.html">Incremental equations in curvature-dependent surface elasticity</a></h3>
+          <p class="pub-authors">Xiang Yu; <strong>Michal Šmejkal</strong>; <strong>Martin Horák</strong></p>
+          <p class="pub-meta"><em>International Journal of Engineering Science</em>, Journal Article, 2026</p>
         </article>
         <article class="publication-item">
-          <h3>Another publication title</h3>
-          <p>Authors, journal/conference, year.</p>
+          <h3><a href="publications.html">Non-uniform pneumatic actuation switches macroscopic properties of elastomeric honeycombs</a></h3>
+          <p class="pub-authors"><strong>Ondřej Faltus</strong>; Martin Doškář; Jan Havelka; Pavel Rychnovský; Ondřej Rokoš</p>
+          <p class="pub-meta"><em>Journal of the Mechanics and Physics of Solids</em>, Journal Article, 2026</p>
+        </article>
+        <article class="publication-item">
+          <h3><a href="publications.html">Deformation gradient averaging regularization for third medium contact</a></h3>
+          <p class="pub-authors"><strong>Ondřej Faltus</strong>; <strong>Marco Amato</strong>; <strong>Martin Horák</strong></p>
+          <p class="pub-meta"><em>Computer Methods in Applied Mechanics and Engineering</em>, Journal Article, 2026</p>
         </article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">Computational Mechanics of Soft Materials Group</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Computational Mechanics of Soft Materials</h3>
+          <p>
+            Mathematical models, numerical methods and open scientific software for soft
+            solids, surface mechanics, instabilities, contact and multiphysics problems.
+          </p>
+          <p>
+            Department of Mechanics, Faculty of Civil Engineering<br />
+            Czech Technical University in Prague<br />
+            Th&aacute;kurova 7, 166 29 Prague 6, Czech Republic
+          </p>
+        </div>
+        <div>
+          <h3>Pages</h3>
+          <ul class="footer-links">
+            <li><a href="people.html">People</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="openings.html">Openings</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Affiliation</h3>
+          <div class="footer-logos">
+            <a href="https://www.cvut.cz/en"><img src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" /></a>
+          </div>
+          <p>
+            Funding is acknowledged on the
+            <a href="projects.html">projects</a> page.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        Computational Mechanics of Soft Materials Group
+      </div>
+    </div>
   </footer>
 
   <script src="script.js"></script>

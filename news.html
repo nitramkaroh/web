@@ -9,13 +9,20 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <span class="brand-text">
+          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-sub">Czech Technical University in Prague</span>
+        </span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="index.html">Opening</a>
         <a href="people.html">People</a>
         <a href="publications.html">Publications</a>
         <a href="projects.html">Projects</a>
+        <a href="news.html" class="active">News</a>
+        <a href="openings.html">Openings</a>
       </nav>
     </div>
   </header>
@@ -37,7 +44,45 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container">Computational Mechanics of Soft Materials Group</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Computational Mechanics of Soft Materials</h3>
+          <p>
+            Mathematical models, numerical methods and open scientific software for soft
+            solids, surface mechanics, instabilities, contact and multiphysics problems.
+          </p>
+          <p>
+            Department of Mechanics, Faculty of Civil Engineering<br />
+            Czech Technical University in Prague<br />
+            Th&aacute;kurova 7, 166 29 Prague 6, Czech Republic
+          </p>
+        </div>
+        <div>
+          <h3>Pages</h3>
+          <ul class="footer-links">
+            <li><a href="people.html">People</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="openings.html">Openings</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Affiliation</h3>
+          <div class="footer-logos">
+            <a href="https://www.cvut.cz/en"><img src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" /></a>
+          </div>
+          <p>
+            Funding is acknowledged on the
+            <a href="projects.html">projects</a> page.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        Computational Mechanics of Soft Materials Group
+      </div>
+    </div>
   </footer>
 
   <script src="script.js"></script>

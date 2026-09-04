@@ -9,13 +9,20 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html">Computational Mechanics of Soft Materials Group</a>
-      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <span class="brand-text">
+          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-sub">Czech Technical University in Prague</span>
+        </span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="index.html">Opening</a>
-        <a class="active" href="people.html">People</a>
+        <a href="people.html" class="active">People</a>
         <a href="publications.html">Publications</a>
         <a href="projects.html">Projects</a>
+        <a href="news.html">News</a>
+        <a href="openings.html">Openings</a>
       </nav>
     </div>
   </header>
@@ -33,8 +40,8 @@
     </section>
 
     <section class="people-grid" aria-label="Team members">
-      <article class="person-card person-card-large">
-        <img class="avatar" src="https://lh3.googleusercontent.com/sitesv/AA5AbUCA7-9j8bU1xgDx1cnDJ1i6zTTSwb1irATe1oCT9ypxpZIEavq63AlabsZUWlaixYbeXi0DZNeQJShKP64gwNTA9gy3AzMmyCleb4uK8JzFlIdX58a_iCp-cEb9wCCfO6Y54hanx-VGCf5loBz_MAjqfNMWX80M13mvA8TEuyzvCZv9KNU3BEIltL-n%3Dw1280" alt="Martin Horák" loading="lazy" referrerpolicy="no-referrer" />
+      <article class="person-card">
+        <img class="avatar" src="figs/mh.jpg" alt="Martin Horák" loading="lazy" />
         <div class="person-body">
           <p class="role">Principal Investigator</p>
           <h2>Martin Horák</h2>
@@ -43,49 +50,95 @@
         </div>
       </article>
 
-      <article class="person-card person-card-large">
-        <img class="avatar" src="https://lh3.googleusercontent.com/sitesv/AA5AbUBQ0y53CjnMoCQvfSMIjIgur1bTxI4s1BPzbBK2SEW5NlV5svmqWcj9aKJq5twYAfK2S2hSMg_iP9_oLbEdcVQfuyW6nEzoZi1fULErK36Fz3VkoccfTtBzFSQjm-be5KneTuvXgFa5N3R7_5Gs8PblIjhsSe7Tonv5_DhgjbCA7bhnXmS_c6-9jXdKJZREpOvOIb2QXCkh9SAzUdIxnLHcLQfgK7KXkpcirAsh%3Dw1280" alt="Michal Šmejkal" loading="lazy" referrerpolicy="no-referrer" />
+      <article class="person-card person-section-card">
         <div class="person-body">
-          <p class="role">Team member</p>
-          <h2>Michal Šmejkal</h2>
-          <p>Michal works on the computational mechanics of soft solids with surface energy. His research contributes to nonlinear-elasticity models with surface energy, surface-polyconvex constitutive modeling, finite element implementation, and benchmark problems where surface mechanics plays a dominant role.</p>
-          <p>He also contributes to the formulation of incremental equations for curvature-dependent surface elasticity and to the stability analysis of surface-driven phenomena in soft cylindrical substrates.</p>
+          <h2>Postdocs</h2>
         </div>
       </article>
 
-      <article class="person-card person-card-large">
-        <img class="avatar" src="https://lh3.googleusercontent.com/sitesv/AA5AbUBISNfto3ucOK6oYaZ18swPNaKv_NZp9iPcPxHnzDFc0PtEv3n0AtG3wiTTda048689T97M1iKb13uoaVNkfQwWKty_14rmTH5bmC1R_JVbPUg4k2AzYj8mM8TT9An0-gcqlliBemH9-baUA799WUbx2YNVQGSWk-TLnxE--uoCvExUSXCVr2TlWQC_XUA%3Dw1280" alt="Ondřej Faltus" loading="lazy" referrerpolicy="no-referrer" />
+      <article class="person-card">
+        <img class="avatar" src="figs/ma.jpg" alt="Marco Amato" loading="lazy" />
         <div class="person-body">
-          <p class="role">Team member</p>
-          <h2>Ondřej Faltus</h2>
-          <p>Ondřej focuses on computational mechanics of highly deformable structures, contact, and architected materials. His work includes third-medium finite element contact formulations, pneumatic actuation of internal voids, and robust numerical models for contact-dominated problems.</p>
-          <p>He also works on pattern-forming pneumatic metamaterials, where pressure-induced instabilities can be used to actively control the effective stiffness and deformation patterns of the material.</p>
-        </div>
-      </article>
-
-      <article class="person-card person-card-large">
-        <img class="avatar" src="https://lh3.googleusercontent.com/sitesv/AA5AbUB-ii2WSTdqmrbQFdn8lxdQvTQh1h1KHnNOx7DHJhNkPPSRa5nKUn0vv0_if7NOL3XOke2v7h0NlM4m4QAxjgRZKvVFF-jCbdPLy7Fc1KNFoE0cTTW1N-QPN_jX3EZIGRAe_bQ0P5GLT7PxoJUhNyzuq6LQgoCgd59sZgnHl6tcj1zZXtc3zWYoUWIAHnE%3Dw1280" alt="Marco Amato" loading="lazy" referrerpolicy="no-referrer" />
-        <div class="person-body">
-          <p class="role">Postdoctoral researcher</p>
           <h2>Marco Amato</h2>
           <p>Marco is a postdoctoral researcher at the Czech Technical University in Prague. His research is situated in solid and structural mechanics, with emphasis on nonlinear phenomena, configurational forces, and magnetoelasticity.</p>
           <p>His work combines analytical modeling with numerical simulations to study material response, instabilities, contact, and multiphysics loading in soft and structural systems.</p>
         </div>
       </article>
 
-      <article class="person-card person-card-large">
-        <img class="avatar" src="https://lh3.googleusercontent.com/sitesv/AA5AbUBzrS1a4603amKObdyxYPocpChL62LoQPSOV0XUIKVY_oPNwsDLg2uny9cynCXyChGv0veJdX6mvEU_QE8yTHrGJQ_jcmnfYw66aSoxjeHvenq5ocr1TuYMdp78-EAt9tyvwd7SWyWm7ligd5_LlsfBPWv7G3wF_TEtf7-I2XxGOQWWyohqFCZxsgxa53TshFR1pkXsumwOQQx_EZKSJfY_zbu73KE8lgbXuUcK7LE%3Dw1280" alt="Riccardo Voso" loading="lazy" referrerpolicy="no-referrer" />
+      <article class="person-card">
+        <img class="avatar" src="figs/of.jpg" alt="Ondřej Faltus" loading="lazy" />
         <div class="person-body">
-          <p class="role">Team member</p>
+          <h2>Ondřej Faltus</h2>
+          <p>Ondřej focuses on computational mechanics of highly deformable structures, contact, and architected materials. His work includes third-medium finite element contact formulations, pneumatic actuation of internal voids, and robust numerical models for contact-dominated problems.</p>
+          <p>He also works on pattern-forming pneumatic metamaterials, where pressure-induced instabilities can be used to actively control the effective stiffness and deformation patterns of the material.</p>
+        </div>
+      </article>
+
+      <article class="person-card">
+        <img class="avatar" src="figs/rv.jpg" alt="Riccardo Voso" loading="lazy" />
+        <div class="person-body">
           <h2>Riccardo Voso</h2>
           <p>Riccardo contributes to the group activities in computational mechanics of soft materials. A more detailed biography can be added here once the public profile text is available.</p>
+        </div>
+      </article>
+
+      <article class="person-card person-section-card">
+        <div class="person-body">
+          <h2>PhD students</h2>
+        </div>
+      </article>
+
+      <article class="person-card">
+        <img class="avatar" src="figs/ms.jpg" alt="Michal Šmejkal" loading="lazy" />
+        <div class="person-body">
+          <h2>Michal Šmejkal</h2>
+          <p>Michal works on the computational mechanics of soft solids with surface energy. His research contributes to nonlinear-elasticity models with surface energy, surface-polyconvex constitutive modeling, finite element implementation, and benchmark problems where surface mechanics plays a dominant role.</p>
+          <p>He also contributes to the formulation of incremental equations for curvature-dependent surface elasticity and to the stability analysis of surface-driven phenomena in soft cylindrical substrates.</p>
         </div>
       </article>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container">Computational Mechanics of Soft Materials Group</div>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Computational Mechanics of Soft Materials</h3>
+          <p>
+            Mathematical models, numerical methods and open scientific software for soft
+            solids, surface mechanics, instabilities, contact and multiphysics problems.
+          </p>
+          <p>
+            Department of Mechanics, Faculty of Civil Engineering<br />
+            Czech Technical University in Prague<br />
+            Th&aacute;kurova 7, 166 29 Prague 6, Czech Republic
+          </p>
+        </div>
+        <div>
+          <h3>Pages</h3>
+          <ul class="footer-links">
+            <li><a href="people.html">People</a></li>
+            <li><a href="publications.html">Publications</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="news.html">News</a></li>
+            <li><a href="openings.html">Openings</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Affiliation</h3>
+          <div class="footer-logos">
+            <a href="https://www.cvut.cz/en"><img src="figs/ctu-logo.png" alt="Czech Technical University in Prague" loading="lazy" /></a>
+          </div>
+          <p>
+            Funding is acknowledged on the
+            <a href="projects.html">projects</a> page.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        Computational Mechanics of Soft Materials Group
+      </div>
+    </div>
   </footer>
 
   <script src="script.js"></script>
