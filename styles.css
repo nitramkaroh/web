@@ -343,12 +343,13 @@ a:hover { text-decoration-color: currentColor; }
 .carousel-slide.has-video.is-playing .carousel-media::after { content: none; }
 
 .carousel-slide figcaption {
-  padding: .7rem .9rem .8rem;
+  padding: .7rem 1.1rem .8rem;
   border-top: 1px solid var(--line);
   font-size: .86rem;
   line-height: 1.4;
   color: var(--muted);
-  text-wrap: pretty;
+  text-align: center;
+  text-wrap: balance;
 }
 .carousel-slide figcaption a {
   font-weight: 600;
