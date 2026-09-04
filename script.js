@@ -123,15 +123,23 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
         (Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 0);
 
       const onEnded = () => advance();
-      const onTime = () => {
-        const length = lengthOf();
-        if (length && video.currentTime >= length - 0.15) advance();
-      };
+      // The backstop is measured from where playback actually is, so a slow
+      // buffer extends the deadline instead of cutting the animation short.
       const armBackstop = () => {
         if (mine !== token) return;
         clearTimer();
         const length = lengthOf();
-        timer = setTimeout(advance, (length ? length * 1000 : interval || 7000) + 1500);
+        const remaining = length ? Math.max(length - video.currentTime, 0) * 1000
+                                 : (interval || 7000);
+        timer = setTimeout(advance, remaining + 600);
+      };
+
+      // timeupdate fires roughly every 250 ms, so the window has to be wider
+      // than that or the last event lands outside it and the backstop wins.
+      const onTime = () => {
+        const length = lengthOf();
+        if (length && video.currentTime >= length - 0.35) { advance(); return; }
+        armBackstop();
       };
 
       video.addEventListener('ended', onEnded, { once: true });

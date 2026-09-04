@@ -243,13 +243,13 @@ a:hover { text-decoration-color: currentColor; }
 
 .hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(250px, 316px);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
   gap: 2.75rem;
   align-items: center;
   padding: 3.5rem 0 3.5rem;
 }
 .hero-text { max-width: 58ch; }
-.hero-figure { --band-h: 440px; width: 100%; }
+.hero-figure { --band-h: 420px; width: 100%; }
 
 .hero h1 { margin-bottom: .75rem; }
 
