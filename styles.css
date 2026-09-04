@@ -241,8 +241,15 @@ a:hover { text-decoration-color: currentColor; }
     var(--soft-bg);
 }
 
-.hero-inner { padding: 3.75rem 0 3.5rem; }
-.hero-text { max-width: 62ch; }
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 316px);
+  gap: 2.75rem;
+  align-items: center;
+  padding: 3.5rem 0 3.5rem;
+}
+.hero-text { max-width: 58ch; }
+.hero-figure { --band-h: 440px; width: 100%; }
 
 .hero h1 { margin-bottom: .75rem; }
 
@@ -267,22 +274,9 @@ a:hover { text-decoration-color: currentColor; }
   margin: 0;
 }
 
-/* ------------------------------ figure band ------------------------------ */
-
-.figure-band {
-  --band-h: 460px;
-  padding: 2.25rem 0 2.5rem;
-  background: var(--soft-bg);
-  border-bottom: 1px solid var(--line);
-}
-
 /* -------------------------------- carousel ------------------------------- */
 
-.carousel {
-  position: relative;
-  max-width: 720px;
-  margin-inline: auto;
-}
+.carousel { position: relative; }
 
 .carousel-viewport {
   overflow: hidden;
@@ -349,10 +343,24 @@ a:hover { text-decoration-color: currentColor; }
 .carousel-slide figcaption {
   padding: .7rem .9rem .8rem;
   border-top: 1px solid var(--line);
-  font-size: .84rem;
-  line-height: 1.45;
+  font-size: .86rem;
+  line-height: 1.4;
   color: var(--muted);
   text-wrap: pretty;
+}
+.carousel-slide figcaption a {
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.carousel-slide figcaption a:hover { text-decoration: underline; }
+.carousel-slide figcaption a::after { content: " \2197"; opacity: .6; font-weight: 400; }
+
+.figcaption-meta {
+  display: block;
+  margin-top: .2rem;
+  font-size: .8rem;
+  color: var(--muted);
 }
 
 .carousel-arrow {
@@ -735,8 +743,13 @@ a:hover { text-decoration-color: currentColor; }
 /* ------------------------------- responsive ------------------------------ */
 
 @media (max-width: 900px) {
-  .hero-inner { padding: 3rem 0 2.75rem; }
-  .figure-band { --band-h: 380px; }
+  /* Below this the two columns squeeze the text, so the figure goes underneath. */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 0 2.75rem;
+  }
+  .hero-figure { --band-h: 340px; max-width: 300px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > :first-child { grid-column: 1 / -1; }
 }
@@ -763,10 +776,6 @@ a:hover { text-decoration-color: currentColor; }
   .project-card { grid-template-columns: 1fr; }
   .avatar { aspect-ratio: 16 / 10; min-height: 0; }
   .project-image { border-right: 0; border-bottom: 1px solid var(--line); }
-}
-
-@media (max-width: 560px) {
-  .figure-band { --band-h: 300px; }
 }
 
 @media (max-width: 520px) {
