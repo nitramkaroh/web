@@ -30,7 +30,7 @@
   <main>
     <section class="hero">
       <div class="container hero-inner">
-        <div>
+        <div class="hero-text">
           <p class="eyebrow">Czech Technical University in Prague</p>
           <h1>Computational Mechanics of Soft Materials</h1>
           <p class="hero-lead">
@@ -47,31 +47,50 @@
             <a class="btn" href="openings.html">Open positions</a>
           </p>
         </div>
-        <div class="hero-figure">
-        <div class="carousel" data-autoplay="7000" aria-roledescription="carousel"
-             aria-label="Figures from the group's work">
-          <div class="carousel-viewport">
-            <ul class="carousel-track">
-              <li class="carousel-slide is-active">
-                <figure>
-                  <div class="carousel-media"><img src="figs/carousel/01-third-medium-contact.jpg"
-                       alt="Third-medium contact with first-order elements: a compressed
-                            seal, a force-displacement comparison against node-to-segment
-                            contact, and a buckling stability problem" /></div>
-                  <figcaption>
-                    Third-medium contact with first-order elements, used in stability problems
-                  </figcaption>
-                </figure>
-              </li>
-            </ul>
-          </div>
-          <button class="carousel-arrow prev" type="button" aria-label="Previous figure">&#8249;</button>
-          <button class="carousel-arrow next" type="button" aria-label="Next figure">&#8250;</button>
-          <div class="carousel-dots" role="tablist" aria-label="Choose a figure"></div>
-        </div>
         </div>
       </div>
     </section>
+
+  <section class="figure-band" aria-label="Figures from the group's work">
+    <div class="container">
+    <div class="carousel" data-autoplay="7000" aria-roledescription="carousel"
+                 aria-label="Figures from the group's work">
+              <div class="carousel-viewport">
+                <ul class="carousel-track">
+                  <li class="carousel-slide is-active">
+                    <figure>
+                      <div class="carousel-media"><img src="figs/carousel/01-third-medium-contact.jpg"
+                           alt="Third-medium contact with first-order elements: a compressed
+                                seal, a force-displacement comparison against node-to-segment
+                                contact, and a buckling stability problem" /></div>
+                      <figcaption>
+                        Third-medium contact with first-order elements, used in stability problems
+                      </figcaption>
+                    </figure>
+                  </li>
+
+                  <li class="carousel-slide">
+                    <figure>
+                      <div class="carousel-media">
+                        <video src="figs/carousel/02-constrained-buckling.mp4"
+                               poster="figs/carousel/02-constrained-buckling.jpg"
+                               muted loop playsinline preload="metadata"
+                               aria-label="A slender strip pushed into a channel buckles into an S
+                                           and then coils, coloured by Cauchy stress magnitude"></video>
+                      </div>
+                      <figcaption>
+                        Constrained buckling of a slender strip pushed into a channel, coloured by
+                        Cauchy stress magnitude &mdash; solved with third-medium contact
+                      </figcaption>
+                    </figure>
+                  </li>
+                </ul>
+              </div>
+              <button class="carousel-arrow prev" type="button" aria-label="Previous figure">&#8249;</button>
+              <button class="carousel-arrow next" type="button" aria-label="Next figure">&#8250;</button>
+              <div class="carousel-dots" role="tablist" aria-label="Choose a figure"></div>
+    </div>
+  </section>
 
     <section class="container content-section">
       <h2>Research</h2>

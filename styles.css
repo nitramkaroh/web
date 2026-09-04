@@ -241,13 +241,8 @@ a:hover { text-decoration-color: currentColor; }
     var(--soft-bg);
 }
 
-.hero-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-  gap: 2.5rem;
-  align-items: center;
-  padding: 4rem 0 4.25rem;
-}
+.hero-inner { padding: 3.75rem 0 3.5rem; }
+.hero-text { max-width: 62ch; }
 
 .hero h1 { margin-bottom: .75rem; }
 
@@ -272,11 +267,22 @@ a:hover { text-decoration-color: currentColor; }
   margin: 0;
 }
 
-.hero-figure { justify-self: center; width: 100%; max-width: 420px; }
+/* ------------------------------ figure band ------------------------------ */
+
+.figure-band {
+  --band-h: 460px;
+  padding: 2.25rem 0 2.5rem;
+  background: var(--soft-bg);
+  border-bottom: 1px solid var(--line);
+}
 
 /* -------------------------------- carousel ------------------------------- */
 
-.carousel { position: relative; }
+.carousel {
+  position: relative;
+  max-width: 720px;
+  margin-inline: auto;
+}
 
 .carousel-viewport {
   overflow: hidden;
@@ -306,9 +312,9 @@ a:hover { text-decoration-color: currentColor; }
 .carousel-media {
   display: grid;
   place-items: center;
-  aspect-ratio: 3 / 2;
-  padding: .5rem;
-  background: var(--soft-bg);
+  height: var(--band-h, 320px);
+  padding: .6rem;
+  background: var(--page-bg);
 }
 
 .carousel-slide img,
@@ -317,7 +323,7 @@ a:hover { text-decoration-color: currentColor; }
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 100%;       /* never upscaled: a small figure is letterboxed */
+  max-height: calc(var(--band-h, 320px) - 1.2rem);  /* frame height less its padding */
   border-radius: 4px;
 }
 
@@ -729,8 +735,8 @@ a:hover { text-decoration-color: currentColor; }
 /* ------------------------------- responsive ------------------------------ */
 
 @media (max-width: 900px) {
-  .hero-inner { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 0 3.25rem; }
-  .hero-figure { justify-self: start; max-width: 300px; }
+  .hero-inner { padding: 3rem 0 2.75rem; }
+  .figure-band { --band-h: 380px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .footer-grid > :first-child { grid-column: 1 / -1; }
 }
@@ -757,6 +763,10 @@ a:hover { text-decoration-color: currentColor; }
   .project-card { grid-template-columns: 1fr; }
   .avatar { aspect-ratio: 16 / 10; min-height: 0; }
   .project-image { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 560px) {
+  .figure-band { --band-h: 300px; }
 }
 
 @media (max-width: 520px) {
