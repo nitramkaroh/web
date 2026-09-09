@@ -311,6 +311,9 @@ a:hover { text-decoration-color: currentColor; }
   background: var(--page-bg);
 }
 
+/* Transparent artwork whose embedded dark labels need a light canvas. */
+.carousel-media-light { background: #fff; }
+
 .carousel-slide img,
 .carousel-slide video {
   position: absolute;
