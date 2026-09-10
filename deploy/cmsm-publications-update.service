@@ -1,5 +1,5 @@
 [Unit]
-Description=Update Computational Mechanics of Soft Materials Group publications page from ORCID
+Description=Update Mechanics of Soft Materials Group publications page from ORCID
 Wants=network-online.target
 After=network-online.target
 

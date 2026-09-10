@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 ORCID_API = "https://pub.orcid.org/v3.0"
-USER_AGENT = "CMSM-ORCID-Publications/1.0 (static-site-generator)"
+USER_AGENT = "MSM-ORCID-Publications/1.0 (static-site-generator)"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -438,16 +438,17 @@ def render_publications_page(publications: list[Publication], group_names: list[
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Computational Mechanics of Soft Materials Group | Publications</title>
+  <title>Mechanics of Soft Materials Group | Publications</title>
+  <link rel="icon" type="image/svg+xml" href="figs/msm-logo.svg" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="index.html">
-        <span class="brand-mark" aria-hidden="true">CMSM</span>
+        <img class="brand-mark" src="figs/msm-logo.svg" alt="" width="38" height="38" />
         <span class="brand-text">
-          <span class="brand-name">Computational Mechanics of Soft Materials</span>
+          <span class="brand-name">Mechanics of Soft Materials Group</span>
           <span class="brand-sub">Czech Technical University in Prague</span>
         </span>
       </a>
@@ -458,6 +459,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
         <a href="projects.html">Projects</a>
         <a href="news.html">News</a>
         <a href="openings.html">Openings</a>
+        <a href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
@@ -480,7 +482,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
     <div class="container">
       <div class="footer-grid">
         <div>
-          <h3>Computational Mechanics of Soft Materials</h3>
+          <h3>Mechanics of Soft Materials Group</h3>
           <p>
             Mathematical models, numerical methods and open scientific software for soft
             solids, surface mechanics, instabilities, contact and multiphysics problems.
@@ -499,6 +501,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
             <li><a href="projects.html">Projects</a></li>
             <li><a href="news.html">News</a></li>
             <li><a href="openings.html">Openings</a></li>
+            <li><a href="contact.html">Contact</a></li>
           </ul>
         </div>
         <div>
@@ -513,7 +516,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
         </div>
       </div>
       <div class="footer-bottom">
-        Computational Mechanics of Soft Materials Group
+        Mechanics of Soft Materials Group
       </div>
     </div>
   </footer>

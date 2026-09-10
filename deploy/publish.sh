@@ -29,7 +29,7 @@ dest="${dest%/}"
 
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
-payload=(index.html people.html publications.html projects.html news.html openings.html
+payload=(index.html people.html publications.html projects.html news.html openings.html contact.html
          styles.css script.js figs)
 for f in "${payload[@]}"; do
     [ -e "$f" ] || { printf 'ERROR: %s is missing from the repo\n' "$f" >&2; exit 1; }

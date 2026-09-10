@@ -13,15 +13,13 @@ data/orcid_members.csv
 Current entries:
 
 ```csv
-name,orcid,role
-Martin Horák,0000-0001-8537-5984,PI
-Michal Šmejkal,0000-0003-1849-7900,PhD student
-Ondřej Faltus,0000-0002-9747-7803,Postdoctoral researcher
-Marco Amato,0000-0003-3764-3889,Postdoctoral researcher
-Riccardo Voso,,Postdoctoral researcher
+name,orcid,role,start_year
+Martin Horák,0000-0001-8537-5984,PI,
+Michal Šmejkal,0000-0003-1849-7900,PhD student,
+Ondřej Faltus,0000-0002-9747-7803,Postdoctoral researcher,
+Marco Amato,0000-0003-3764-3889,Postdoctoral researcher,2026
+Riccardo Voso,0000-0002-5511-8618,Postdoctoral researcher,
 ```
-
-Riccardo Voso is included in the team list, but his ORCID iD was not confidently identified from public pages. Add it to the CSV when available.
 
 ## 2. Generate locally
 

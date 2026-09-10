@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Computational Mechanics of Soft Materials Group
+   Mechanics of Soft Materials Group
    One stylesheet, one definition per rule. Tokens first, then base, then
    layout, then components in the order they appear in the page shell.
    ========================================================================== */
@@ -174,16 +174,10 @@ a:hover { text-decoration-color: currentColor; }
 
 .brand-mark {
   flex: 0 0 auto;
-  display: grid;
-  place-items: center;
+  display: block;
   width: 38px;
   height: 38px;
   border-radius: 9px;
-  background: var(--accent);
-  color: #fff;
-  font-size: .82rem;
-  font-weight: 800;
-  letter-spacing: .02em;
 }
 
 .brand-text {
@@ -609,6 +603,43 @@ a:hover { text-decoration-color: currentColor; }
 .person-body h2 { font-size: 1.22rem; margin-bottom: .5rem; }
 .person-body p { color: var(--muted); font-size: .96rem; }
 
+.person-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: .55rem;
+}
+.person-heading h2 { margin: 0; }
+
+.profile-links {
+  display: inline-flex;
+  align-items: center;
+  gap: .32rem;
+}
+.profile-link {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--page-bg);
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(16, 33, 43, .06);
+  transition: transform .16s, background-color .16s, border-color .16s;
+}
+.profile-link:hover {
+  transform: translateY(-1px);
+  background: var(--surface);
+  border-color: var(--accent);
+}
+.profile-link img {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
 /* A row that only carries a group heading. */
 .person-section-card {
   display: block;
@@ -688,6 +719,64 @@ a:hover { text-decoration-color: currentColor; }
 .opening-card h2 { font-size: 1.24rem; margin-bottom: .6rem; }
 .opening-card p { color: var(--muted); }
 .opening-card p:first-of-type { color: var(--text); font-size: 1.03rem; }
+.openings-apply { padding-top: 3.75rem; }
+
+/* -------------------------------- contact -------------------------------- */
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: minmax(250px, .78fr) minmax(0, 1.5fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.contact-card,
+.contact-simulation {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.contact-card { padding: 1.5rem 1.6rem; }
+.contact-card h2 { margin-bottom: .35rem; }
+.contact-card > p { color: var(--muted); }
+
+.contact-details {
+  display: grid;
+  margin: 1.35rem 0 1.5rem;
+}
+
+.contact-details > div {
+  padding: .8rem 0;
+  border-top: 1px solid var(--line);
+}
+.contact-details > div:last-child { border-bottom: 1px solid var(--line); }
+
+.contact-details dt {
+  margin-bottom: .08rem;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.contact-details dd { margin: 0; }
+.contact-address { font-style: normal; }
+
+.contact-simulation { margin: 0; }
+.contact-simulation-media {
+  aspect-ratio: 16 / 9;
+  background: #fff;
+}
+.contact-simulation video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
 /* ------------------------------ placeholders ----------------------------- */
 
@@ -755,19 +844,7 @@ a:hover { text-decoration-color: currentColor; }
 
 /* ------------------------------- responsive ------------------------------ */
 
-@media (max-width: 900px) {
-  /* Below this the two columns squeeze the text, so the figure goes underneath. */
-  .hero-inner {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 3rem 0 2.75rem;
-  }
-  .hero-figure { --band-h: 340px; max-width: 300px; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .footer-grid > :first-child { grid-column: 1 / -1; }
-}
-
-@media (max-width: 760px) {
+@media (max-width: 960px) {
   .nav-toggle { display: block; }
   .site-nav {
     position: absolute;
@@ -784,6 +861,22 @@ a:hover { text-decoration-color: currentColor; }
   .site-nav a { padding: .6rem .5rem; border-radius: 0; }
 
   .brand-sub { display: none; }
+}
+
+@media (max-width: 900px) {
+  /* Below this the two columns squeeze the text, so the figure goes underneath. */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 0 2.75rem;
+  }
+  .hero-figure { --band-h: 340px; max-width: 300px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid > :first-child { grid-column: 1 / -1; }
+  .contact-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
 
   .person-card,
   .project-card { grid-template-columns: 1fr; }

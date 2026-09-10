@@ -1,4 +1,4 @@
-# Computational Mechanics of Soft Materials Group website
+# Mechanics of Soft Materials Group website
 
 This is a static HTML/CSS/JS website template for a research group. It includes:
 
@@ -6,6 +6,7 @@ This is a static HTML/CSS/JS website template for a research group. It includes:
 - people page with team cards, photos, and short biographies
 - projects page
 - news page
+- contact page with group details and a contact-mechanics animation
 - publication page generated from public ORCID records
 
 ## Local preview
@@ -51,4 +52,4 @@ README_DEPLOYMENT.md
 It contains both cron and systemd-timer examples for running the ORCID update every morning.
 
 
-Navigation now includes an Opening item linking to index.html. People, Publications, and Projects also include introductory page-opening sections.
+Navigation includes dedicated Openings and Contact pages. People, Publications, and Projects also include introductory page-opening sections.

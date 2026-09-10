@@ -1,5 +1,5 @@
 [Unit]
-Description=Run CMSM Group ORCID publication update every morning
+Description=Run Mechanics of Soft Materials Group ORCID publication update every morning
 
 [Timer]
 # Runs every day at 06:00 local server time.
