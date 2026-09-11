@@ -844,6 +844,17 @@ a:hover { text-decoration-color: currentColor; }
 
 /* ------------------------------- responsive ------------------------------ */
 
+/* Who leads the group, and how to reach them. Kept on the landing page and on
+   the PI's card because eligibility checks (funders, programmes) are made from
+   an address plus a URL, and the two have to be resolvable on the same page. */
+.hero-pi {
+  margin-top: .55rem;
+  font-size: .95rem;
+  color: var(--muted);
+}
+.hero-pi strong { color: var(--text); }
+
+
 @media (max-width: 960px) {
   .nav-toggle { display: block; }
   .site-nav {
