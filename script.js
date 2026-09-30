@@ -44,7 +44,8 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
       video.loop = single;
       video.playsInline = true;
       video.setAttribute('playsinline', '');
-      video.preload = 'metadata';
+      // Fetch the visible animation up front; hidden slides only need metadata.
+      video.preload = slide.classList.contains('is-active') ? 'auto' : 'metadata';
       if (reduceMotion) video.controls = true;
     });
   });
@@ -52,6 +53,7 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
   function playIn(slide) {
     let started = false;
     slide.querySelectorAll('video').forEach((video) => {
+      video.preload = 'auto';
       if (reduceMotion) return;
       const p = video.play();
       if (p && p.catch) p.catch(() => {});
@@ -184,14 +186,6 @@ document.querySelectorAll('.carousel').forEach((carousel) => {
     if (event.key === 'ArrowLeft') show(index - 1);
     if (event.key === 'ArrowRight') show(index + 1);
   });
-
-  // Hold still under a cursor, or while someone is reading a caption.
-  function hold() { clearTimer(); stopIn(slides[index], false); }
-  function resume() { playIn(slides[index]); scheduleAdvance(); }
-  carousel.addEventListener('mouseenter', hold);
-  carousel.addEventListener('mouseleave', resume);
-  carousel.addEventListener('focusin', hold);
-  carousel.addEventListener('focusout', resume);
 
   // Swipe on touch devices.
   let startX = null;

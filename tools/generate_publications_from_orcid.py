@@ -30,6 +30,7 @@ from typing import Any, Iterable
 
 ORCID_API = "https://pub.orcid.org/v3.0"
 USER_AGENT = "MSM-ORCID-Publications/1.0 (static-site-generator)"
+DEFAULT_MIN_YEAR = 2020
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -257,7 +258,13 @@ def parse_work_detail(work: dict[str, Any], member: Member) -> Publication:
     )
 
 
-def fetch_member_publications(member: Member, *, max_works: int | None = None, verbose: bool = True) -> list[Publication]:
+def fetch_member_publications(
+    member: Member,
+    *,
+    min_year: int | None = None,
+    max_works: int | None = None,
+    verbose: bool = True,
+) -> list[Publication]:
     if not member.orcid:
         if verbose:
             print(f"Skipping {member.name}: no ORCID iD in CSV", file=sys.stderr)
@@ -279,6 +286,8 @@ def fetch_member_publications(member: Member, *, max_works: int | None = None, v
             put_codes.append(put_code)
     if max_works is not None:
         put_codes = put_codes[:max_works]
+    cutoff_years = [year for year in (min_year, member.start_year) if year is not None]
+    cutoff_year = max(cutoff_years) if cutoff_years else None
 
     pubs: list[Publication] = []
     for idx, put_code in enumerate(put_codes, start=1):
@@ -286,7 +295,7 @@ def fetch_member_publications(member: Member, *, max_works: int | None = None, v
         try:
             work = request_json(detail_url)
             pub = parse_work_detail(work, member)
-            if member.start_year is not None and pub.year.isdigit() and int(pub.year) < member.start_year:
+            if cutoff_year is not None and pub.year.isdigit() and int(pub.year) < cutoff_year:
                 continue
             pubs.append(pub)
         except RuntimeError as exc:
@@ -399,7 +408,13 @@ def item_class(pub: Publication) -> str:
     return "publication-item"
 
 
-def render_publications_page(publications: list[Publication], group_names: list[str], generated_note: str) -> str:
+def render_publications_page(
+    publications: list[Publication],
+    group_names: list[str],
+    generated_note: str,
+    min_year: int | None,
+) -> str:
+    year_scope = f" from {min_year} onward" if min_year is not None else ""
     publications.sort(key=lambda p: (p.date_sort, normalize_key(p.title)), reverse=True)
     years: dict[str, list[Publication]] = {}
     for pub in publications:
@@ -440,7 +455,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mechanics of Soft Materials Group | Publications</title>
   <link rel="icon" type="image/svg+xml" href="figs/msm-logo.svg" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=1cdd4d19" />
 </head>
 <body>
   <header class="site-header">
@@ -469,7 +484,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
       <p class="eyebrow">Publications</p>
       <h1>Publications</h1>
       <p class="lead">
-        The publication list is generated from public ORCID records and organized by year. Group members are shown in <strong>bold</strong>.
+        The publication list is generated from public ORCID records{year_scope} and organized by year. Group members are shown in <strong>bold</strong>.
       </p>
     </section>
 
@@ -521,7 +536,7 @@ def render_publications_page(publications: list[Publication], group_names: list[
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=ef453924"></script>
 </body>
 </html>
 """
@@ -536,12 +551,19 @@ def resolve_project_path(path_str: str) -> Path:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Generate publications.html from public ORCID works.")
-    parser.add_argument("--members", default="data/orcid_members.csv", help="CSV with columns name,orcid,role")
+    parser.add_argument("--members", default="data/orcid_members.csv", help="CSV with columns name,orcid,role,start_year")
     parser.add_argument("--group-members", default="data/group_members.txt", help="Names to bold in author lists")
     parser.add_argument("--out", default="publications.html", help="Output HTML file")
     parser.add_argument("--max-works", type=int, default=None, help="Limit works per ORCID record, useful for testing")
+    parser.add_argument(
+        "--min-year", type=int, default=DEFAULT_MIN_YEAR,
+        help=f"Earliest publication year to include; use 0 for no cutoff (default: {DEFAULT_MIN_YEAR})",
+    )
     parser.add_argument("--note", default="Generated from public ORCID records. Re-run tools/generate_publications_from_orcid.py to update this page.")
     args = parser.parse_args()
+    if args.min_year < 0:
+        parser.error("--min-year must be zero or positive")
+    min_year = args.min_year or None
 
     members_path = resolve_project_path(args.members)
     if not members_path.exists():
@@ -552,10 +574,12 @@ def main() -> int:
     group_names = load_group_names(resolve_project_path(args.group_members), members)
     all_publications: list[Publication] = []
     for member in members:
-        all_publications.extend(fetch_member_publications(member, max_works=args.max_works))
+        all_publications.extend(
+            fetch_member_publications(member, min_year=min_year, max_works=args.max_works)
+        )
 
     publications = remove_redundant_preprints(deduplicate(all_publications))
-    html_text = render_publications_page(publications, group_names, args.note)
+    html_text = render_publications_page(publications, group_names, args.note, min_year)
     out_path = resolve_project_path(args.out)
     out_path.write_text(html_text, encoding="utf-8")
     print(f"Wrote {out_path} with {len(publications)} unique publications.")

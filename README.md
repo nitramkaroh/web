@@ -29,6 +29,8 @@ The publication page can be regenerated from ORCID:
 python3 tools/generate_publications_from_orcid.py
 ```
 
+The generated group list includes publications from 2020 onward by default.
+
 Team ORCID IDs are stored in:
 
 ```text
