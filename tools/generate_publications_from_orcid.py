@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import html
 import json
 import re
@@ -408,6 +409,15 @@ def item_class(pub: Publication) -> str:
     return "publication-item"
 
 
+def asset_stamp(name: str) -> str:
+    """The cache-busting stamp tools/stamp-assets.sh writes (md5, first 8 hex).
+
+    Computed here rather than written into the template, so a scheduled ORCID
+    run after a stylesheet change cannot publish the page with a stale stamp.
+    """
+    return hashlib.md5((PROJECT_ROOT / name).read_bytes()).hexdigest()[:8]
+
+
 def render_publications_page(
     publications: list[Publication],
     group_names: list[str],
@@ -415,6 +425,8 @@ def render_publications_page(
     min_year: int | None,
 ) -> str:
     year_scope = f" from {min_year} onward" if min_year is not None else ""
+    css_stamp = asset_stamp("styles.css")
+    js_stamp = asset_stamp("script.js")
     publications.sort(key=lambda p: (p.date_sort, normalize_key(p.title)), reverse=True)
     years: dict[str, list[Publication]] = {}
     for pub in publications:
@@ -455,7 +467,7 @@ def render_publications_page(
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mechanics of Soft Materials Group | Publications</title>
   <link rel="icon" type="image/svg+xml" href="figs/msm-logo.svg" />
-  <link rel="stylesheet" href="styles.css?v=1cdd4d19" />
+  <link rel="stylesheet" href="styles.css?v={css_stamp}" />
 </head>
 <body>
   <header class="site-header">
@@ -475,6 +487,7 @@ def render_publications_page(
         <a href="news.html">News</a>
         <a href="openings.html">Openings</a>
         <a href="contact.html">Contact</a>
+        <a href="teaching.html">Teaching</a>
       </nav>
     </div>
   </header>
@@ -517,6 +530,7 @@ def render_publications_page(
             <li><a href="news.html">News</a></li>
             <li><a href="openings.html">Openings</a></li>
             <li><a href="contact.html">Contact</a></li>
+            <li><a href="teaching.html">Teaching</a></li>
           </ul>
         </div>
         <div>
@@ -536,7 +550,7 @@ def render_publications_page(
     </div>
   </footer>
 
-  <script src="script.js?v=ef453924"></script>
+  <script src="script.js?v={js_stamp}"></script>
 </body>
 </html>
 """

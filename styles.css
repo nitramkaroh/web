@@ -15,6 +15,7 @@
   --accent:     #1d5b7a;
   --accent-ink: #14435c;
   --accent-soft:#e6f0f5;
+  --on-accent:  #ffffff;   /* text on an --accent fill */
   --shadow:     0 1px 2px rgba(16, 33, 43, .05), 0 8px 24px -18px rgba(16, 33, 43, .28);
 
   /* type */
@@ -41,6 +42,7 @@
     --accent:     #6cb6d6;
     --accent-ink: #9ed2ea;
     --accent-soft:#172934;
+    --on-accent:  #10171d;   /* the dark accent is light: white on it is ~2:1 */
     --shadow:     0 1px 2px rgba(0, 0, 0, .4);
   }
 }
@@ -380,7 +382,7 @@ a:hover { text-decoration-color: currentColor; }
   cursor: pointer;
   transition: background-color .15s, color .15s;
 }
-.carousel-arrow:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+.carousel-arrow:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .carousel-arrow.prev { left: .55rem; }
 .carousel-arrow.next { right: .55rem; }
 
@@ -419,7 +421,7 @@ a:hover { text-decoration-color: currentColor; }
   transition: background-color .15s, color .15s, border-color .15s;
 }
 .btn:hover { background: var(--accent-soft); }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .btn-primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
 
 /* --------------------------------- cards --------------------------------- */
@@ -721,6 +723,37 @@ a:hover { text-decoration-color: currentColor; }
 .opening-card p:first-of-type { color: var(--text); font-size: 1.03rem; }
 .openings-apply { padding-top: 3.75rem; }
 
+/* -------------------------------- teaching ------------------------------- */
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Sits on .card-base; the column lets both buttons line up at the bottom. */
+.course-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.6rem 1.75rem;
+  border-left: 3px solid var(--accent);
+}
+.course-card h2 { font-size: 1.24rem; margin-bottom: .6rem; }
+.course-card p:not(.eyebrow) { margin-bottom: 1.4rem; color: var(--muted); }
+.course-card .btn { margin-top: auto; }
+
+.teaching-note {
+  max-width: 70ch;
+  margin-top: 1.75rem;
+  padding: .9rem 1.15rem;
+  background: var(--soft-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: .93rem;
+  color: var(--muted);
+}
+
 /* -------------------------------- contact -------------------------------- */
 
 .contact-grid {
@@ -855,7 +888,9 @@ a:hover { text-decoration-color: currentColor; }
 .hero-pi strong { color: var(--text); }
 
 
-@media (max-width: 960px) {
+/* The brand and seven nav items need a ~980px viewport with system-ui;
+   collapse with some slack so wider fonts do not wrap the brand name. */
+@media (max-width: 1040px) {
   .nav-toggle { display: block; }
   .site-nav {
     position: absolute;
