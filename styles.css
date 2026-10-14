@@ -723,37 +723,6 @@ a:hover { text-decoration-color: currentColor; }
 .opening-card p:first-of-type { color: var(--text); font-size: 1.03rem; }
 .openings-apply { padding-top: 3.75rem; }
 
-/* -------------------------------- teaching ------------------------------- */
-
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
-}
-
-/* Sits on .card-base; the column lets both buttons line up at the bottom. */
-.course-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.6rem 1.75rem;
-  border-left: 3px solid var(--accent);
-}
-.course-card h2 { font-size: 1.24rem; margin-bottom: .6rem; }
-.course-card p:not(.eyebrow) { margin-bottom: 1.4rem; color: var(--muted); }
-.course-card .btn { margin-top: auto; }
-
-.teaching-note {
-  max-width: 70ch;
-  margin-top: 1.75rem;
-  padding: .9rem 1.15rem;
-  background: var(--soft-bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: .93rem;
-  color: var(--muted);
-}
-
 /* -------------------------------- contact -------------------------------- */
 
 .contact-grid {

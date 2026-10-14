@@ -29,8 +29,8 @@ dest="${dest%/}"
 
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
-payload=(index.html people.html publications.html projects.html teaching.html news.html openings.html
-         contact.html styles.css script.js figs)
+payload=(index.html people.html publications.html projects.html news.html openings.html contact.html
+         styles.css script.js figs)
 for f in "${payload[@]}"; do
     [ -e "$f" ] || { printf 'ERROR: %s is missing from the repo\n' "$f" >&2; exit 1; }
 done
@@ -45,13 +45,6 @@ done < <(grep -ho '\(href\|src\|poster\)="[^"]*"' "${payload[@]%%figs}"*.html 2>
          | grep -v '^\(https\?:\|//\|mailto:\|#\)' \
          | sed 's/[?#].*//' | sort -u)   # styles.css?v=<stamp> is the file styles.css
 [ "$missing" = 0 ] || exit 1
-
-# The course buttons stay on a placeholder until the teaching portal is
-# deployed (README.md, "Teaching portal link"). Not fatal: the rest of the site
-# can go out before the portal does.
-if grep -q 'PORTAL-PATH-TBD' teaching.html; then
-    printf 'WARNING: teaching.html still links to the placeholder portal URL (PORTAL-PATH-TBD)\n' >&2
-fi
 
 if command -v rsync >/dev/null; then
     rsync -av "${dry[@]}" --chmod=D755,F644 --exclude='figs/*.pdf' --exclude='figs/*.eps' \

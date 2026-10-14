@@ -487,7 +487,7 @@ def render_publications_page(
         <a href="news.html">News</a>
         <a href="openings.html">Openings</a>
         <a href="contact.html">Contact</a>
-        <a href="teaching.html">Teaching</a>
+        <a href="https://mech.fsv.cvut.cz/~mhorak/vyuka/">Teaching</a>
       </nav>
     </div>
   </header>
@@ -530,7 +530,7 @@ def render_publications_page(
             <li><a href="news.html">News</a></li>
             <li><a href="openings.html">Openings</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="teaching.html">Teaching</a></li>
+            <li><a href="https://mech.fsv.cvut.cz/~mhorak/vyuka/">Teaching</a></li>
           </ul>
         </div>
         <div>
